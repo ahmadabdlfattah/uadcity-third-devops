@@ -1,45 +1,45 @@
 version: 2.1
 
 commands:
-   install_awscli: 
-     description: Install AWS CLI v2
-     steps: 
-       - run:
-           name: Install AWS CLI v2
-           command: |
-             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-             unzip awscliv2.zip
-             sudo ./aws/install
-   install_ansible: 
-     description: Install Ansible v2
-     steps: 
-       - run:
-           name: Install Ansible v2
-           command: |
-              sudo apt update
-              sudo apt install software-properties-common
-              sudo add-apt-repository --yes --update ppa:ansible/ansible
-              sudo apt install ansible   
-    destroy-environment:
-      description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-      parameters:
-        Workflow_ID: 
-          type: string
-          default: ${CIRCLE_WORKFLOW_ID:0:7}  
-      steps:
-        - run:
-            name: Destroy environments
-            when: on_fail
-            command: |
-              aws s3 rm s3://udapeople-<<parameters.Workflow_ID>> --recursive
-              aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>
-              aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>        
+  install_awscli:
+    description: Install AWS CLI v2
+    steps:
+      - run:
+          name: Install AWS CLI v2
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+  install_ansible:
+    description: Install Ansible v2
+    steps:
+      - run:
+          name: Install Ansible v2
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common
+            sudo add-apt-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible
 
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      Workflow_ID:
+        type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            aws s3 rm s3://udapeople-<<parameters.Workflow_ID>> --recursive
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
 
 #  revert-migrations:
 #    description: Revert the last migration if successfully run in the current workflow.
 #    parameters:
-#      # Add parameter here     
+#      # Add parameter here
 #    steps:
 #      - run:
 #          name: Revert migrations
@@ -47,14 +47,14 @@ commands:
 #          command: |
 #            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
 #            SUCCESS = 1
-#            if(( $SUCCESS==1 )); 
+#            if(( $SUCCESS==1 ));
 #            then
 #            #  cd ~/project/backend
 #           #  npm install
 #            #  Add revert code here. You can find this in the Getting Started section.
 #              exit 1
 #            fi
-#            
+#
 jobs:
   build-frontend:
     docker:
@@ -83,9 +83,9 @@ jobs:
       - run:
           name: Back-end build
           command: |
-             cd backend
-             npm install
-             npm run build
+            cd backend
+            npm install
+            npm run build
       - save_cache:
           paths: [backend/node_modules]
           key: backend-deps
@@ -103,7 +103,7 @@ jobs:
             cd frontend 
             npm install 
             npm test
-                
+
   test-backend:
     docker:
       - image: cimg/node:13.8.0
@@ -114,10 +114,10 @@ jobs:
       - run:
           name: backend unit testing
           command: |
-             cd backend
-             npm install
-             npm test
-            
+            cd backend
+            npm install
+            npm test
+
   scan-frontend:
     docker:
       - image: cimg/node:13.8.0
@@ -143,11 +143,11 @@ jobs:
       - run:
           name: backend scanning
           command: |
-             cd backend
-             npm install
-             npm audit fix --force --audit-level=critical
-             npm audit fix --force --audit-level=critical             
-             npm audit --audit-level=critical
+            cd backend
+            npm install
+            npm audit fix --force --audit-level=critical
+            npm audit fix --force --audit-level=critical             
+            npm audit --audit-level=critical
 
   deploy-infrastructure:
     docker:
@@ -162,7 +162,7 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --tags project=udacity \
               --stack-name "udacity-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -170,7 +170,7 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --tags project=udacity \
               --stack-name "udacity-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -179,15 +179,15 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
             echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
-            cat .circleci/ansible/inventory.txt  
+            cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
 
-      - destroy-environment    
-        
-      # Here's where you will add some code to rollback on failure      
+      - destroy-environment
+
+      # Here's where you will add some code to rollback on failure
 
 #   configure-infrastructure:
 #     docker:
@@ -206,7 +206,7 @@ jobs:
 #           command: |
 #             # Your code here
 #             exit 1
-#       # Here's where you will add some code to rollback on failure      
+#       # Here's where you will add some code to rollback on failure
 
 #   run-migrations:
 #     docker:
@@ -223,7 +223,7 @@ jobs:
 #           command: |
 #             # Your code here
 #             exit 1
-#      # Here's where you will add some code to rollback on failure      
+#      # Here's where you will add some code to rollback on failure
 
 #   deploy-frontend:
 #     docker:
@@ -244,8 +244,8 @@ jobs:
 #           name: Deploy frontend objects
 #           command: |
 #             # your code here
-#       # Here's where you will add some code to rollback on failure      
-                    
+#       # Here's where you will add some code to rollback on failure
+
 #   deploy-backend:
 #     docker:
 #       # Docker image here that supports Ansible
@@ -261,11 +261,11 @@ jobs:
 #           name: Deploy backend
 #           command: |
 #             # your code here
-#       # Here's where you will add some code to rollback on failure  
+#       # Here's where you will add some code to rollback on failure
 
 #   smoke-test:
 #     docker:
-#       # Lightweight Docker image 
+#       # Lightweight Docker image
 #     steps:
 #       # Checkout code from git
 #       - run:
@@ -284,7 +284,7 @@ jobs:
 #           name: Frontend smoke test.
 #           command: |
 #             # your code here
-#       # Here's where you will add some code to rollback on failure  
+#       # Here's where you will add some code to rollback on failure
 
 #   cloudfront-update:
 #     docker:
@@ -299,7 +299,7 @@ jobs:
 #           name: Update cloudfront distribution
 #           command: |
 #             # your code here
-#       # Here's where you will add some code to rollback on failure  
+#       # Here's where you will add some code to rollback on failure
 
 # cleanup:
 #     docker:
@@ -319,7 +319,6 @@ jobs:
 #             then
 #               # your code here
 #             fi
-            
 
 workflows:
   default:
