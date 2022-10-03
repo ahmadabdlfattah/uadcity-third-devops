@@ -234,7 +234,7 @@ jobs:
             fi 
       - destroy-environment
       - revert-migrations
-     # Here's where you will add some code to rollback on failure
+     # Here's where you will add some code to rollback on failure 
 
 #   deploy-frontend:
 #     docker:
