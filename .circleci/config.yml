@@ -204,7 +204,7 @@ jobs:
       - install_awscli
       - install_ansible
       - add_ssh_keys:
-          fingerprints: ["7c:8a:2d:93:c5:dd:79:23:03:c7:91:fb:20:e1:5a:ae"]
+          fingerprints: ["f3:a1:ba:1c:5f:9a:d6:e2:75:76:6b:03:10:53:a2:66"]
       - attach_workspace:
           at: ~/
       - run:
@@ -217,7 +217,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.10
     steps:
       - checkout 
       - install_awscli
@@ -285,7 +285,7 @@ jobs:
       - install_ansible
       - install_nodejs
       - add_ssh_keys:
-          fingerprints: ["7c:8a:2d:93:c5:dd:79:23:03:c7:91:fb:20:e1:5a:ae"]
+          fingerprints: ["f3:a1:ba:1c:5f:9a:d6:e2:75:76:6b:03:10:53:a2:66"]
       - attach_workspace:
           at: ~/ 
       - restore_cache:
